@@ -1,35 +1,79 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import CV from './components/CV';
+import './App.css';
+import GeneralInfoForm from './components/GeneralInfoForm';
+import FormContainer from './components/FormContainer';
+import EducationalExperiencesForm from './components/EducationalExperiencesForm';
+import PracticalExperiencesForm from './components/PracticalExperienceForm';
 
 function App() {
-  const [count, setCount] = useState(0)
+  // {name, email, phone}
+  const [userGeneralInfo, setUserGeneralInfo] = useState({
+    name: '',
+    email: '',
+    phone: '',
+  });
+  const [educationalExperiences, setEducationalExperiences] = useState([]);
+  const [practicalExperiences, setPracticalExperiences] = useState([]);
+
+  function handleGeneralInfoFormSubmit(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const name = formData.get('name');
+    const email = formData.get('email');
+    const phone = formData.get('phone');
+
+    setUserGeneralInfo({ name, email, phone });
+  }
+
+  function handleEducationalExperienciesFormSubmit(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const schoolName = formData.get('school-name');
+    const studyTitle = formData.get('study-title');
+    const dateOfStudy = new Date(formData.get('date-of-study'));
+    setEducationalExperiences([
+      ...educationalExperiences,
+      { schoolName, studyTitle, dateOfStudy },
+    ]);
+  }
+
+  function handlePracticalExperiencesFormSubmit(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const companyName = formData.get('company-name');
+    const positionTitle = formData.get('position-title');
+    const responsibilities = formData.get('responsibilities');
+    const dateFrom = new Date(formData.get('from'));
+    const dateTo = new Date(formData.get('to'));
+    setPracticalExperiences([
+      ...practicalExperiences,
+      { companyName, positionTitle, responsibilities, dateFrom, dateTo },
+    ]);
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <FormContainer title="General Info">
+        <GeneralInfoForm onFormSubmit={handleGeneralInfoFormSubmit} />
+      </FormContainer>
+      <FormContainer title="Educational experiences">
+        <EducationalExperiencesForm
+          onFormSubmit={handleEducationalExperienciesFormSubmit}
+        />
+      </FormContainer>
+      <FormContainer title="Practical experience">
+        <PracticalExperiencesForm
+          onFormSubmit={handlePracticalExperiencesFormSubmit}
+        ></PracticalExperiencesForm>
+      </FormContainer>
+      <CV
+        userGeneralInfo={userGeneralInfo}
+        educationalExperiences={educationalExperiences}
+        practicalExperiences={practicalExperiences}
+      />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
